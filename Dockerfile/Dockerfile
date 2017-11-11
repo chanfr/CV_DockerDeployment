@@ -1,4 +1,4 @@
-FROM nvidia/cuda:8.0-cudnn7-devel
+FROM nvidia/cuda:8.0-cudnn6-devel
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
@@ -19,3 +19,5 @@ RUN pip install -r /opt/CV_DockerDeployment/requirements.txt
 ENV PYTHONPATH=/opt/CV_DockerDeployment
 
 EXPOSE 5000
+
+WORKDIR /opt/CV_DockerDeployment/server

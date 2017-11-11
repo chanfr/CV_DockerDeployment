@@ -29,15 +29,17 @@ def process_lenet(host,port):
     files = {'media': open(imagePath, 'rb')}
     data=requests.post(url, files=files)
 
+    try:
+        responseData=json.loads(data.content)
+        image = cv2.resize(image, (96, 96), interpolation=cv2.INTER_LINEAR)
+        image =cv2.cvtColor(image,cv2.COLOR_GRAY2BGR )
+        cv2.putText(image, str(responseData["prediction"]), (5, 20),
+        cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
 
-    responseData=json.loads(data.content)
-    image = cv2.resize(image, (96, 96), interpolation=cv2.INTER_LINEAR)
-    image =cv2.cvtColor(image,cv2.COLOR_GRAY2BGR )
-    cv2.putText(image, str(responseData["prediction"]), (5, 20),
-    cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 255, 0), 2)
-
-    cv2.imshow("Result",image)
-    cv2.waitKey(0)
+        cv2.imshow("Result",image)
+        cv2.waitKey(0)
+    except:
+        print "Error: ", data.content
 
 
 
