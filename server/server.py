@@ -29,20 +29,25 @@ def index():
 @app.route('/process', methods=['POST'])
 def process_lenet():
     if lenetActive:
-        global lenet
-        if lenet == None:
-            from DockerDeployment import Lenet
-            weightsPath = "../DockerDeployment/weights/trained.hd5"
-            lenet = Lenet.LeNet(width=28, height=28, depth=1, classes=10, weightsPath=weightsPath)
-        imageKey = "media"
-        data = {}
-        if request.method == 'POST' and imageKey in request.files:
-            image = ImageRetriever.getImage(request, imageKey)
-            prediction = lenet.predict(image)
-            data["prediction"]=prediction[0]
-            return jsonify(data),200
-        else:
-            abort(500)
+        try:
+            global lenet
+            if lenet == None:
+                from DockerDeployment import Lenet
+                weightsPath = "../DockerDeployment/weights/trained.hd5"
+                lenet = Lenet.LeNet(width=28, height=28, depth=1, classes=10, weightsPath=weightsPath)
+            imageKey = "media"
+            data = {}
+            if request.method == 'POST' and imageKey in request.files:
+                image = ImageRetriever.getImage(request, imageKey)
+                prediction = lenet.predict(image)
+                data["prediction"]=prediction[0]
+                return jsonify(data),200
+            else:
+                abort(500)
+        except Exception as e:
+            error_msg="Error at process_lenet: " + str(e)
+            logging.error(error_msg)
+            return error_msg,404
     else:
         return "Lenet is not active on server", 500
 
@@ -107,4 +112,4 @@ if __name__ == '__main__':
     elif opts.recog:
         recogActive=True
 
-    app.run(debug=True)
+    app.run(host="0.0.0.0",debug=True)

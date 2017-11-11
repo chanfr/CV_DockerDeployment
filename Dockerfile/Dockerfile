@@ -14,4 +14,8 @@ RUN mkdir -p /opt && \
     cd /opt && \
     git clone http://github.com/chanfr/CV_DockerDeployment
 
+RUN pip install -r /opt/CV_DockerDeployment/requirements.txt
+
 ENV PYTHONPATH=/opt/CV_DockerDeployment
+
+EXPOSE 5000
