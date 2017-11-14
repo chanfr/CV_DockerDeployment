@@ -21,3 +21,5 @@ ENV PYTHONPATH=/opt/CV_DockerDeployment
 EXPOSE 5000
 
 WORKDIR /opt/CV_DockerDeployment/server
+
+CMD python server.py --lenet=True
