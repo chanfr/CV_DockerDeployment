@@ -2,5 +2,5 @@ flask
 pillow
 opencv-python
 keras
-tensorflow
+tensorflow-gpu
 h5py
