@@ -34,7 +34,7 @@ def process_lenet():
             if lenet == None:
                 from DockerDeployment import Lenet
                 weightsPath = "../DockerDeployment/weights/trained.hd5"
-                lenet = Lenet.LeNet(width=28, height=28, depth=1, classes=10, weightsPath=weightsPath)
+                lenet = Lenet.LeNet(weightsPath=weightsPath)
             imageKey = "media"
             data = {}
             if request.method == 'POST' and imageKey in request.files:
@@ -60,16 +60,13 @@ def getSize():
         image = ImageRetriever.getImage(request, imageKey)
         data={}
         try:
-            if len(image.shape)==3:
-                h,w,c=image.shape
-                data["width"]=w
-                data["height"]=h
-                data["channels"]=c
+            shape=image.shape
+            h=shape[0]
+            w=shape[1]
+            if len(shape)==3:
+                c=shape[2]
             else:
-                h,w=image.shape
-                data["width"]=w
-                data["height"]=h
-                data["channels"]=1
+                c=1
         except Exception, e:
             s = str(e)
             logging.error("Error on get_size" + s)
@@ -77,20 +74,6 @@ def getSize():
         return jsonify(data),200
     else:
         abort(500)
-
-
-@app.route('/get_objects', methods=['POST'])
-def get_objects():
-    if recog != None:
-        imageKey = "media"
-        if request.method == 'POST' and imageKey in request.files:
-            image = ImageRetriever.getImage(request, imageKey)
-            recog.processImage(image)
-
-
-    else:
-        return "Recog is not active on server", 500
-
 
 
 def parseArguments():

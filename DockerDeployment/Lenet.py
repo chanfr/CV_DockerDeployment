@@ -12,8 +12,13 @@ import cv2
 
 
 class LeNet:
-    def __init__(self, width, height, depth, classes, weightsPath):
-        img_rows, img_cols = 28, 28
+    def __init__(self, weightsPath,width=28, height=28):
+        '''
+        :param weightsPath: Path of the network pre-trained weights
+        :param width: With of the input layer
+        :param height: Height of the input layer
+        '''
+        img_rows, img_cols = width, height
         num_classes = 10
         self.inputsize=(img_rows, img_cols)
 
@@ -33,8 +38,6 @@ class LeNet:
         model.add(Dense(128, activation='relu'))
         model.add(Dropout(0.5))
         model.add(Dense(num_classes, activation='softmax'))
-
-        # if weightsPath is specified load the weights
         model.load_weights(weightsPath)
 
         opt = SGD(lr=0.01)
@@ -42,6 +45,10 @@ class LeNet:
         self.model=model
 
     def predict(self,image_in):
+        '''
+        :param image_in: The input image
+        :return: The predicted digit
+        '''
         image=image_in.copy()
         if len(image.shape)>2:
             h,w,c=image.shape
