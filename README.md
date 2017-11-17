@@ -2,7 +2,7 @@
 
 Examples and documentatino of how to deploy a computer vision application. 
 
-## Requirements
+## Requirements for server execution using docker
 ### With gpu compatibility (only for ubuntu 16.04)
 * Docker [Installation guide](https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu/)
 * Cuda:
@@ -20,14 +20,19 @@ Examples and documentatino of how to deploy a computer vision application.
 nvidia-docker run --rm nvidia/cuda nvidia-smi
 ```
 
-###Without gpu compatibility
+### Without gpu compatibility
 * Docker [Installation guide](https://docs.docker.com/engine/installation)
 
 
+## Requirements for client execution:
+* Python2.7
+* Following python packages:
+```sh
+    pip install sklearn requests opencv-python pillow --upgrade
+```
 
 
-
-##Aditional configuration
+## Aditional configuration
 * Include a user to docker group:
 
     In order to use docker with your own user, you have to include your user into the "docker" group:
