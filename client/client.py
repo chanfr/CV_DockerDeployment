@@ -4,8 +4,9 @@ from sklearn import datasets
 from sklearn.model_selection import train_test_split
 import numpy as np
 import cv2
-import StringIO
-from PIL import Image
+from DockerDeployment.ImageSender import ImageSender
+
+
 
 
 def getMNISImage():
@@ -25,9 +26,8 @@ def process_lenet(host,port):
     for i in range(0,10):
         url="{}:{}/process".format(host,port)
         image=getMNISImage()
-        imagePath="test_image.png"
-        cv2.imwrite(imagePath,image)
-        files = {'media': open(imagePath, 'rb')}
+        ret=ImageSender.prepare_to_send(image)
+        files={'media': ("temp.png",ret)}
         data=requests.post(url, files=files)
 
         try:
@@ -42,19 +42,6 @@ def process_lenet(host,port):
         except:
             print "Error: ", data.content
 
-
-
-def test():
-    image=getMNISImage()
-    cv2.imshow("testInput")
-    imagePath='/mnt/large/pentalo/deep/datasets/voc/original_format/VOCdevkit/VOC2007/JPEGImages/000001.jpg'
-
-
-    files = {'media': open(imagePath, 'rb')}
-    data=requests.post(url, files=files)
-
-    responseData=json.loads(data.content)
-    print responseData
 
 
 def main():

@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import requests
 import json
+from DockerDeployment.ImageSender import ImageSender
 
 drawing = False # true if mouse is pressed
 mode = True # if True, draw rectangle. Press 'm' to toggle to curve
@@ -36,9 +37,9 @@ while(1):
     cv2.imshow('image',img)
     k = cv2.waitKey(1)
     if k != -1:
-        imagePath = "test_image.png"
-        cv2.imwrite(imagePath, img)
-        files = {'media': open(imagePath, 'rb')}
+
+        ret=ImageSender.prepare_to_send(img)
+        files={'media': ("temp.png",ret)}
         data = requests.post(url, files=files)
         responseData = json.loads(data.content)
         image = cv2.resize(img, (96, 96), interpolation=cv2.INTER_LINEAR)

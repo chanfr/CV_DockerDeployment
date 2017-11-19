@@ -4,18 +4,22 @@ from flask import request
 from flask import abort
 from flask import Flask, jsonify
 from PIL import Image
-import StringIO
+from StringIO import StringIO
 import cv2
 import numpy as np
 from DockerDeployment.ImageRetriever import *
 import logging
 import argparse
+from flask import send_file
 
 
 recogActive=False
 recog=None
 lenetActive=False
 lenet=None
+face_cascadeLoaded=False
+face_cascade=None
+eye_cascade=None
 
 
 app = Flask(__name__)
@@ -74,6 +78,42 @@ def getSize():
         return jsonify(data),200
     else:
         abort(500)
+
+
+@app.route('/face_detection', methods=['POST'])
+def laplacian():
+    if not face_cascadeLoaded:
+        face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+        eye_cascade = cv2.CascadeClassifier('haarcascade_eye.xml')
+
+    imageKey = "media"
+    if request.method == 'POST' and imageKey in request.files:
+        image = ImageRetriever.getImage(request, imageKey)
+        if len(image.shape)>2:
+            gray=cv2.cvtColor(image,cv2.COLOR_RGB2GRAY)
+        else:
+            gray=image
+
+
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        for (x, y, w, h) in faces:
+            cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
+            roi_gray = gray[y:y + h, x:x + w]
+            roi_color = image[y:y + h, x:x + w]
+            eyes = eye_cascade.detectMultiScale(roi_gray)
+            for (ex, ey, ew, eh) in eyes:
+                cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
+
+
+        pil_img= Image.fromarray(image.astype(np.uint8))
+        img_io = StringIO.StringIO()
+        pil_img.save(img_io, 'JPEG', quality=70)
+        img_io.seek(0)
+        return send_file(img_io, mimetype='image/jpeg')
+
+    else:
+        abort(500)
+
 
 
 def parseArguments():
