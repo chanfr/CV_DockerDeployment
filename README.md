@@ -33,6 +33,12 @@ nvidia-docker run --rm nvidia/cuda nvidia-smi
 
 
 ## Aditional configuration
+* Download needed docker images:
+```sh
+    docker pull chanfr/cv_dockerdeployment:server_gpu
+    docker pull chanfr/cv_dockerdeployment:server_cpu
+    docker pull chanfr/cv_dockerdeployment:python_opencv_example
+```
 * Include a user to docker group:
 
     In order to use docker with your own user, you have to include your user into the "docker" group:
