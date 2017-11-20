@@ -25,15 +25,16 @@ nvidia-docker run --rm nvidia/cuda nvidia-smi
 
 
 ## Requirements for client execution:
-* Python2.7
+* Python 2 / 3
+* OpenCV 3 for python
 * Following python packages:
 ```sh
-    pip install sklearn requests opencv-python pillow --upgrade
+    pip install sklearn requests pillow --upgrade
 ```
 
 
 ## Aditional configuration
-* Download needed docker images:
+* Download the following docker images needed to execute the examples:
 ```sh
     docker pull chanfr/cv_dockerdeployment:server_gpu
     docker pull chanfr/cv_dockerdeployment:server_cpu
