@@ -29,7 +29,7 @@ nvidia-docker run --rm nvidia/cuda nvidia-smi
 * OpenCV 3 for python
 * Following python packages:
 ```sh
-    pip install sklearn requests pillow --upgrade
+    pip install sklearn requests pillow scipy --upgrade
 ```
 
 
