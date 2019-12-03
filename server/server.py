@@ -1,33 +1,29 @@
 #!flask/bin/python
-from flask import Flask
-from flask import request
-from flask import abort
-from flask import Flask, jsonify
-from PIL import Image
-from StringIO import StringIO
-import cv2
-import numpy as np
-from DockerDeployment.ImageRetriever import *
-import logging
 import argparse
+import logging
+
+import cv2
+from flask import Flask, jsonify
+from flask import abort
+from flask import request
 from flask import send_file
 
+from DockerDeployment.ImageRetriever import *
 
-recogActive=False
-recog=None
-lenetActive=False
-lenet=None
-face_cascadeLoaded=False
-face_cascade=None
-eye_cascade=None
-
+recogActive = False
+recog = None
+lenetActive = False
+lenet = None
+face_cascadeLoaded = False
+face_cascade = None
+eye_cascade = None
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index():
-    return "Server is running",200
-
+    return "Server is running", 200
 
 
 @app.route('/process', methods=['POST'])
@@ -44,17 +40,16 @@ def process_lenet():
             if request.method == 'POST' and imageKey in request.files:
                 image = ImageRetriever.getImage(request, imageKey)
                 prediction = lenet.predict(image)
-                data["prediction"]=prediction[0]
-                return jsonify(data),200
+                data["prediction"] = int(prediction[0])
+                return jsonify(data), 200
             else:
                 abort(500)
         except Exception as e:
-            error_msg="Error at process_lenet: " + str(e)
+            error_msg = "Error at process_lenet: " + str(e)
             logging.error(error_msg)
-            return error_msg,404
+            return error_msg, 404
     else:
         return "Lenet is not active on server", 500
-
 
 
 @app.route('/get_size', methods=['POST'])
@@ -62,20 +57,19 @@ def getSize():
     imageKey = "media"
     if request.method == 'POST' and imageKey in request.files:
         image = ImageRetriever.getImage(request, imageKey)
-        data={}
+        data = {}
         try:
-            shape=image.shape
-            h=shape[0]
-            w=shape[1]
-            if len(shape)==3:
-                c=shape[2]
+            shape = image.shape
+            h = shape[0]
+            w = shape[1]
+            if len(shape) == 3:
+                c = shape[2]
             else:
-                c=1
-        except Exception, e:
-            s = str(e)
-            logging.error("Error on get_size" + s)
+                c = 1
+        except Exception as e:
+            logging.error("Error on get_size {}", e)
             abort(500)
-        return jsonify(data),200
+        return jsonify(data), 200
     else:
         abort(500)
 
@@ -89,11 +83,10 @@ def laplacian():
     imageKey = "media"
     if request.method == 'POST' and imageKey in request.files:
         image = ImageRetriever.getImage(request, imageKey)
-        if len(image.shape)>2:
-            gray=cv2.cvtColor(image,cv2.COLOR_RGB2GRAY)
+        if len(image.shape) > 2:
+            gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         else:
-            gray=image
-
+            gray = image
 
         faces = face_cascade.detectMultiScale(gray, 1.3, 5)
         for (x, y, w, h) in faces:
@@ -104,16 +97,14 @@ def laplacian():
             for (ex, ey, ew, eh) in eyes:
                 cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
 
-
-        pil_img= Image.fromarray(image.astype(np.uint8))
-        img_io = StringIO.StringIO()
+        pil_img = Image.fromarray(image.astype(np.uint8))
+        img_io = BytesIO()
         pil_img.save(img_io, 'JPEG', quality=70)
         img_io.seek(0)
         return send_file(img_io, mimetype='image/jpeg')
 
     else:
         abort(500)
-
 
 
 def parseArguments():
@@ -124,15 +115,14 @@ def parseArguments():
     return parser.parse_args()
 
 
-
 if __name__ == '__main__':
-    opts=parseArguments()
-    print opts.lenet
-    print opts.recog
+    opts = parseArguments()
+    print(opts.lenet)
+    print(opts.recog)
 
     if opts.lenet:
-        lenetActive=True
+        lenetActive = True
     elif opts.recog:
-        recogActive=True
+        recogActive = True
 
-    app.run(host="0.0.0.0",debug=True)
+    app.run(host="0.0.0.0", debug=True, threaded=True)

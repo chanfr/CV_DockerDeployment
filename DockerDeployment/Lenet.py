@@ -1,14 +1,12 @@
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
-from keras.layers.core import Activation
-from keras.layers.core import Flatten
-from keras.layers.core import Dense
-from keras import backend as K
-from keras.optimizers import SGD
-import numpy as np
 import cv2
-
+import numpy as np
+from keras import backend as K
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Dropout
+from keras.layers.core import Dense
+from keras.layers.core import Flatten
+from keras.models import Sequential
+from keras.optimizers import SGD
 
 
 class LeNet:

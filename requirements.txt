@@ -1,6 +1,7 @@
 flask
 pillow
 opencv-python
-keras
-tensorflow
+keras==2.2.5
+tensorflow==1.14
 h5py
+mnist

@@ -1,6 +1,7 @@
-from PIL import Image
-import StringIO
+from io import BytesIO
+
 import numpy as np
+from PIL import Image
 
 
 class ImageRetriever:
@@ -9,6 +10,6 @@ class ImageRetriever:
     def getImage(request,key):
         file = request.files[key]
         data=file.read()
-        pil_image = Image.open(StringIO.StringIO(data))
+        pil_image = Image.open(BytesIO(data))
         cv_image = np.array(pil_image)
         return cv_image

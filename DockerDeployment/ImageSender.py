@@ -1,5 +1,6 @@
+from io import BytesIO
+
 from PIL import Image
-from StringIO import StringIO
 
 
 class ImageSender():
@@ -7,7 +8,7 @@ class ImageSender():
     @staticmethod
     def prepare_to_send(image):
         pil_im = Image.fromarray(image)
-        io = StringIO()
+        io = BytesIO()
         pil_im.save(io, "jpeg")
         ret = io.getvalue()
         io.close()

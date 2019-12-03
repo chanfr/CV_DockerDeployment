@@ -1,11 +1,7 @@
-
-from keras.applications.mobilenet import MobileNet
-from keras.preprocessing import image as image_utils
 import numpy as np
 from keras.applications.mobilenet import *
-import cv2
-
-
+import numpy as np
+from keras.applications.mobilenet import *
 
 
 class ObjectRecognition:
