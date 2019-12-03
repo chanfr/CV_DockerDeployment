@@ -41,10 +41,11 @@ def process_lenet(host, port, auto_mode, number_of_requests):
 
 
 def main():
+    #host = "http://ec2co-ecsel-vgimzl5m1dpz-314581070.eu-west-3.elb.amazonaws.com"
     host = "http://localhost"
     port = "5000"
-    auto_mode = False
-    number_of_requests = 1000
+    auto_mode = True
+    number_of_requests = 10000
     process_lenet(host, port, auto_mode, number_of_requests)
 
 

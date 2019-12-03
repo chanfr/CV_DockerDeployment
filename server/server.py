@@ -1,6 +1,7 @@
 #!flask/bin/python
 import argparse
 import logging
+import threading
 
 import cv2
 from flask import Flask, jsonify
@@ -17,6 +18,8 @@ lenet = None
 face_cascadeLoaded = False
 face_cascade = None
 eye_cascade = None
+my_mutex = None
+
 
 app = Flask(__name__)
 
@@ -25,21 +28,33 @@ app = Flask(__name__)
 def index():
     return "Server is running", 200
 
+def cpu_delay():
+    a = np.random.rand(10000,10000)
+    for i in range(1,10):
+        a*a
+
 
 @app.route('/process', methods=['POST'])
 def process_lenet():
     if lenetActive:
         try:
             global lenet
+            global my_mutex
             if lenet == None:
                 from DockerDeployment import Lenet
                 weightsPath = "../DockerDeployment/weights/trained.hd5"
+                my_mutex.acquire()
                 lenet = Lenet.LeNet(weightsPath=weightsPath)
+                my_mutex.release()
+
             imageKey = "media"
             data = {}
             if request.method == 'POST' and imageKey in request.files:
                 image = ImageRetriever.getImage(request, imageKey)
+                cpu_delay()
+                my_mutex.acquire()
                 prediction = lenet.predict(image)
+                my_mutex.release()
                 data["prediction"] = int(prediction[0])
                 return jsonify(data), 200
             else:
@@ -119,6 +134,7 @@ if __name__ == '__main__':
     opts = parseArguments()
     print(opts.lenet)
     print(opts.recog)
+    my_mutex = threading.Lock()
 
     if opts.lenet:
         lenetActive = True
