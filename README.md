@@ -43,4 +43,4 @@ nvidia-docker run --rm nvidia/cuda nvidia-smi
 * Include a user to docker group:
 
     In order to use docker with your own user, you have to include your user into the "docker" group:
-sudo usermod -aG docker <USER>
+sudo usermod -aG docker <USER>  xx
